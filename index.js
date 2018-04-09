@@ -30,20 +30,19 @@ if (config.websocketPort !== false) {
 	var wsserver;
 	
 	
-	(new Temperature.Mock([{device:"000001"}, {device:"000002"}])).on('update', function(sensor) {
-
+	//(new Temperature.Mock([{device:"000001"}, {device:"000002"}])).on('update', function(sensor) {
+	(new Temperature()).on('update', function(sensor) {
 		temperatureSensors[sensor.device]=sensor;
-		console.log(JSON.stringify(sensor));
+		//console.log(JSON.stringify(sensor));
 		counter++;
 
-		wsserver.broadcast('notification.statechange', JSON.stringify({
-					"device":sensor.device,
-					"value": sensor.value
-				}));
+		wsserver.broadcast('notification.statechange', JSON.stringify(sensor));
 
 
 	});
 
+	var devices = require('./devices.json');
+	
 
 
 
@@ -51,20 +50,35 @@ if (config.websocketPort !== false) {
 		port: config.websocketPort
 	})).addTask('list_devices', function(options, callback) {
 
+		var additionalDevices=devices;
+		
+		
 
-		callback(Object.keys(temperatureSensors).map(function(sensor){
+		callback(Object.keys(temperatureSensors).map(function(sensorId){
 
-			var device=temperatureSensors[sensor];
+			var device=temperatureSensors[sensorId];
+
+			console.log(JSON.stringify(device));
+
+			devices.forEach(function(d, i){
+				if(d.device==sensorId){
+					additionalDevices.splice(i,1);
+					Object.keys(d).forEach(function(k){
+						device[k]=d[k];
+					});
+				}
+			});
+
 			return {
 
-				"name":"Temperature: "+sensor,
-				"device":sensor,
+				"name":device.name || "Temp: "+device.device,
+				"device":sensorId,
 				"type":"float",
 				"state":device.value,
 				"readonly":true
 			}
 
-		}));
+		}).concat(additionalDevices));
 
 	});
 
