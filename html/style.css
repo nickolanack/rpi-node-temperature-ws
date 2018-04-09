@@ -1,0 +1,31 @@
+@CHARSET "UTF-8";
+
+.ui-switch {
+    border: 1px solid;
+    border-color: cadetblue;
+    margin: 5px;
+    border-radius: 3px;
+    box-shadow: 0 0 5px #cccccc inset;
+    display: inline-block;
+}
+
+.ui-ctrl-handle {
+    border: 1px solid #777777;
+    border-radius: 2px;
+    box-shadow: 0 0 2px #aaaaaa;
+}
+
+
+.active .ui-ctrl-handle {
+    background-color: chartreuse;
+}
+
+label {
+    margin: 5px;   display: inline-block;   
+    vertical-align: top;
+    font-family: sans-serif;
+    font-weight: 100;
+    color: cornflowerblue;
+    font-size: 10px;
+    line-height: 15px;
+}

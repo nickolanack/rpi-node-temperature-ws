@@ -1,0 +1,34 @@
+{
+  "name": "rpi-node-temperature-webserver",
+  "version": "0.0.0",
+  "description": "a simple webserver for rasberrypi providing controls for monitoring i2c temperature sensors",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickolanack/rpi-node-temperature-ws.git"
+  },
+  "keywords": [
+    "rpi",
+    "raspberypi",
+    "gpio",
+    "webserver",
+    "automation",
+    "controller"
+  ],
+  "author": "Nick Blackwell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nickolanack/rpi-node-temperature-ws/issues"
+  },
+  "dependencies":{
+    "rpi-gpio":"latest",
+    "ws":"latest",
+    "async":"latest",
+    "tinywebjs":"git://github.com/nickolanack/tinywebjs.git#master",
+    "tinywebsocketjs":"git://github.com/nickolanack/tinywebsocketjs.git#master",
+    "node-rpio-temperature": "git://github.com/nickolanack/node-rpio-temperature.git#master"
+  }
+}

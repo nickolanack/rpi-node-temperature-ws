@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="shortcut icon" href="rpi-favicon.ico" type="image/x-icon">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raspberry Pi - Sensors</title>
+<script type="text/javascript" src="mtc-1.5.1.js"></script>
+<script type="text/javascript" src="mtm-1.5.1.js"></script>
+<script type="text/javascript" src="ui-c.js"></script>
+<script type="text/javascript" src="ui-s.js"></script>
+<script type="text/javascript" src="ui-ls.js"></script>
+<script type="text/javascript" src="ws.js"></script>
+<script type="text/javascript" src="ui-gpio.js"></script>
+<link rel="stylesheet" href="style.css" />
+<script type="text/javascript">
+
+
+	window.addEvent('load',function(){
+	
+		new UIGeneralPurposeIOPanel($$('body')[0],{
+			//websocket:'ws://'+window.location.hostname+':8080'
+		});
+
+	});
+
+</script>
+</head>
+<body>
+
+</body>
+</html>
