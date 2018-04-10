@@ -15,7 +15,7 @@
 	"state": false
 }, {
 	"name": "Greenhouse fan",
-	"pin": 5,
+	"pin": 8,
 	"direction": "out",
 	"type": "bool",
 	"state": false
