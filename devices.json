@@ -1,8 +1,11 @@
 [{
-	"device": "000001",
-	"name": "Greenhouse"
+	"device": "28-0000086466a7",
+	"name": "Greenhouse 1"
 }, {
-	"device": "000002",
+	"device": "28-000008648aa9",
+	"name": "Greenhouse 2"
+},{
+	"device": "28-000008666297",
 	"name": "Outside"
 }, {
 	"name": "Greenhouse Heater",
