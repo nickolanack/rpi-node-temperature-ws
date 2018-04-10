@@ -169,7 +169,7 @@ var UIGeneralPurposeIOPanel = new Class({
 						Array.each(updatedDevices, function(updatedDevice) {
 							var state = updatedDevice.state;
 							Array.each(devices, function(device) {
-								if (device.pin === updatedDevice.pin) {
+								if(device.device==updatedDevice.device||(device.pin&&device.pin === updatedDevice.pin)){
 									device._suppressEventSignal = true;
 									device.control.setValue(state);
 								}

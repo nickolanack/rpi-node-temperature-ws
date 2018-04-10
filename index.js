@@ -31,7 +31,7 @@ if (config.websocketPort !== false) {
 	
 	
 	//(new Temperature.Mock([{device:"000001"}, {device:"000002"}])).on('update', function(sensor) {
-	(new Temperature()).on('update', function(sensor) {
+	 (new Temperature()).on('update', function(sensor) {
 		temperatureSensors[sensor.device]=sensor;
 		//console.log(JSON.stringify(sensor));
 		counter++;
@@ -41,7 +41,7 @@ if (config.websocketPort !== false) {
 
 	});
 
-	var devices = require('./devices.json');
+	var devices =require('./devices.json');
 	
 
 
@@ -50,7 +50,7 @@ if (config.websocketPort !== false) {
 		port: config.websocketPort
 	})).addTask('list_devices', function(options, callback) {
 
-		var additionalDevices=devices;
+		var additionalDevices=require('./devices.json');
 		
 		
 

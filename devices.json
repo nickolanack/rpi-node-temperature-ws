@@ -1,7 +1,19 @@
 [{
-	"device":"000001",
-	"name":"Greenhouse"
-},{
-	"device":"000002",
-	"name":"Outside"
+	"device": "000001",
+	"name": "Greenhouse"
+}, {
+	"device": "000002",
+	"name": "Outside"
+}, {
+	"name": "Greenhouse Heater",
+	"pin": 7,
+	"direction": "out",
+	"type": "bool",
+	"state": false
+}, {
+	"name": "Greenhouse fan",
+	"pin": 5,
+	"direction": "out",
+	"type": "bool",
+	"state": false
 }]
