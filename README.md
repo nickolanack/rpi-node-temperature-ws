@@ -18,3 +18,6 @@ node index.js
 
 modify server.json to change server port and websocket port
 modify devices.json to add/alter other gpio pin switches 
+
+
+<img src="https://raw.github.com/nickolanack/rpi-node-temperature-ws/master/Screen%20Shot%202018-04-12%20at%2012.30.04%20AM.png" height="300px"/>
