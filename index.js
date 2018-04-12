@@ -30,8 +30,8 @@ if (config.websocketPort !== false) {
 	var wsserver;
 	
 	
-	(new Temperature.Mock([{device:"10-000001"}, {device:"10-000002"}, {device:"10-000003"}])).on('update', function(sensor) {
-	// (new Temperature()).on('update', function(sensor) {
+	//(new Temperature.Mock([{device:"10-000001"}, {device:"10-000002"}, {device:"10-000003"}])).on('update', function(sensor) {
+	(new Temperature()).on('update', function(sensor) {
 	// 
 		//sensor.time=(new Date()).valueOf();
 		temperatureSensors[sensor.device]=sensor;
