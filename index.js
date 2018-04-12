@@ -30,8 +30,10 @@ if (config.websocketPort !== false) {
 	var wsserver;
 	
 	
-	//(new Temperature.Mock([{device:"000001"}, {device:"000002"}])).on('update', function(sensor) {
-	 (new Temperature()).on('update', function(sensor) {
+	(new Temperature.Mock([{device:"10-000001"}, {device:"10-000002"}, {device:"10-000003"}])).on('update', function(sensor) {
+	// (new Temperature()).on('update', function(sensor) {
+	// 
+		//sensor.time=(new Date()).valueOf();
 		temperatureSensors[sensor.device]=sensor;
 		//console.log(JSON.stringify(sensor));
 		counter++;
@@ -50,17 +52,18 @@ if (config.websocketPort !== false) {
 		port: config.websocketPort
 	})).addTask('list_devices', function(options, callback) {
 
-		var additionalDevices=require('./devices.json');
+		var additionalDevices=JSON.parse(JSON.stringify(devices));
 		
+		console.log(JSON.stringify(additionalDevices));
 		
 
 		callback(Object.keys(temperatureSensors).map(function(sensorId){
 
 			var device=temperatureSensors[sensorId];
 
-			console.log(JSON.stringify(device));
+			
 
-			devices.forEach(function(d, i){
+			additionalDevices.forEach(function(d, i){
 				if(d.device==sensorId){
 					additionalDevices.splice(i,1);
 					Object.keys(d).forEach(function(k){
@@ -75,7 +78,9 @@ if (config.websocketPort !== false) {
 				"device":sensorId,
 				"type":"float",
 				"state":device.value,
-				"readonly":true
+				"readonly":true,
+				"graphOptions":device.graphOptions||{},
+				"units":device.units
 			}
 
 		}).concat(additionalDevices));

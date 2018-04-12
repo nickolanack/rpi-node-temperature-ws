@@ -29,3 +29,13 @@ label {
     font-size: 10px;
     line-height: 15px;
 }
+
+label.value {
+    font-size: 17px;
+    width: 65px;
+    text-align: right;
+}
+label.value:after {
+    content: attr(data-units);
+    font-size: 10px;
+}

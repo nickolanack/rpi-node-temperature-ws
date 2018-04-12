@@ -104,7 +104,7 @@ var WebsocketControlQuery = new Class({
 
 		if (!me._handlers['_' + id]) {
 			me.fireEvent(id, data);
-			console.warn("unhandled message: " + data)
+			//console.warn("unhandled message: " + data)
 
 		} else {
 			var time = me._timerStop(id);
