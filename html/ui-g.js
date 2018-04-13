@@ -84,7 +84,8 @@ var UIGraph = new Class({
                 'rgba(191, 0, 31, 0.7)'
             ],
             highlightLineColor: 'magenta',
-            minValue: 3,
+            minYValue: 0,
+            minXValue: 0,
             shadowColor: false,
             parseX: function(dataValue, i) {
                 return i;
@@ -127,7 +128,8 @@ var UIGraph = new Class({
         var me = this;
 
         me.data = [];
-        me.maxValue = 0;
+        me.maxYValue = 0;
+        me.maxXValue = 0;
 
         var sets=me.options.parseSets(arg);
 
@@ -137,8 +139,13 @@ var UIGraph = new Class({
             if (data && data.length) {
                 Array.each(data, function(v, i) {
                     var y = me.options.parseY(v, i);
-                    if (me.maxValue < y) {
-                        me.maxValue = y;
+                    if (me.maxYValue < y) {
+                        me.maxYValue = y;
+                    }
+
+                    var x = me.options.parseX(v, i);
+                    if (me.maxXValue < x) {
+                        me.maxXValue = x;
                     }
                     
                 });
@@ -148,8 +155,12 @@ var UIGraph = new Class({
 
         
 
-        if (me.maxValue < me.options.minValue) {
-            me.maxValue = me.options.minValue;
+        if (me.maxYValue < me.options.minYValue) {
+            me.maxYValue = me.options.minYValue;
+        }
+
+        if (me.maxXValue < me.options.minXValue) {
+            me.maxXValue = me.options.minXValue;
         }
 
         if (me.context) {
@@ -216,7 +227,7 @@ var UIGraph = new Class({
 
             if (config.fillGradient) {
 
-                var grd = me.context.createLinearGradient(0, me.getYPixel(0), 0, me.getYPixel(me.maxValue));
+                var grd = me.context.createLinearGradient(0, me.getYPixel(0), 0, me.getYPixel(me.maxYValue));
 
                 var colorStop = 1.0 / config.fillGradientArray.length;
                 Array.each(config.fillGradientArray, function(c, i) {
@@ -261,7 +272,7 @@ var UIGraph = new Class({
             //console.trace(); 
             throw 'Invalid Y';
         }
-        var value = me.getHeight() * (1 - y / me.maxValue) + (this.options.padding || 0);
+        var value = me.getHeight() * (1 - y / me.maxYValue) + (this.options.padding || 0);
         //JSConsole(['Y pixel', y, value]);
         return value;
 
@@ -272,7 +283,7 @@ var UIGraph = new Class({
             //console.trace(); 
             throw 'Invalid X';
         }
-        var value = (me.getWidth() / (me.data.length)) * x + (me.options.padding || 0);
+        var value = (me.getWidth() / (me.maxXValue)) * x + (me.options.padding || 0);
         //JSConsole(['X pixel', x, value]);
         return value;
     },
@@ -308,7 +319,7 @@ var UIGraph = new Class({
      */
     dataPointAtXPixel: function(x) {
         var me = this;
-        var index = Math.min(Math.floor(((x - (me.options.padding || 0)) / me.getWidth()) * me.data.length), me.data.length - 1);
+        var index = Math.min(Math.floor(((x - (me.options.padding || 0)) / me.getWidth()) * me.maxXValue), me.data.length - 1);
         return me.data[index];
     },
 

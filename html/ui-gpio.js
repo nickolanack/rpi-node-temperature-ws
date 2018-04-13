@@ -108,6 +108,25 @@ var UIGeneralPurposeIOPanel = new Class({
 		            			lineColor:"black"
 		            		}
 		            	])[index], device.graphOptions||{}), index:index};
+
+						setInterval(function(){
+
+							/**
+							 * Devices with very little change can fall off the graph
+							 */
+
+							var time=(new Date()).valueOf();
+							var last=data[name].values[data[name].values.length-1];
+							if(last.x<time-(1000)){
+								data[name].values.push({x:time, y:last.y});
+							}
+
+							if(now<time-(1000)){
+								graph.setData({sets:data});
+							}
+							
+						},1000);
+
 					}
 
 					
@@ -136,7 +155,7 @@ var UIGeneralPurposeIOPanel = new Class({
 
 
 					var state = device.state;
-					addGraphHistory(device, state);
+					addGraphHistory(device, state?1:0);
 
 					var container = element.appendChild(new Element('div'));
 					var control = new UISwitchControl(container, {
@@ -144,7 +163,7 @@ var UIGeneralPurposeIOPanel = new Class({
 					}).addEvent("change", function(newState) {
 						if (state != newState) {
 
-							addGraphHistory(device, newState);
+							addGraphHistory(device, newState?1:0);
 
 							if (!device._suppressEventSignal) {
 								signalDeviceValue(device.pin, newState);
@@ -160,6 +179,7 @@ var UIGeneralPurposeIOPanel = new Class({
 							delete device._suppressEventSignal;
 						}
 					});
+
 					container.appendChild(new Element('label', {
 						html: device.name
 					}));

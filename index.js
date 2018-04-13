@@ -29,8 +29,9 @@ if (config.websocketPort !== false) {
 	var Temperature = require('node-rpio-temperature');
 	var wsserver;
 	
-	
-	//(new Temperature.Mock([{device:"10-000001"}, {device:"10-000002"}, {device:"10-000003"}])).on('update', function(sensor) {
+	var devices =require('./devices.json');
+
+	//(new Temperature.Mock(devices)).on('update', function(sensor) {
 	(new Temperature()).on('update', function(sensor) {
 	// 
 		//sensor.time=(new Date()).valueOf();
@@ -43,7 +44,7 @@ if (config.websocketPort !== false) {
 
 	});
 
-	var devices =require('./devices.json');
+	
 	
 
 

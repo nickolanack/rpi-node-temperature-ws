@@ -1,0 +1,80 @@
+[{
+	"device": "10-000001",
+	"name": "Greenhouse 1",
+	"graphOptions":{
+		"lineColor":"magenta",
+		"lineTemplate":"UIGraph.CubicSplineTemplate",
+		"fillGradient":true,
+		"fillGradientArray": [
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 255, 0)",
+                "rgba(0, 63, 255, 0.05)",
+                "rgba(0, 127, 255, 0.1)",
+                "rgba(0, 191, 255,  0.2)",
+                "rgba(0, 255, 255, 0.5)"
+            ]
+
+	}
+}, {
+	"device": "10-000002",
+	"name": "Greenhouse 2",
+	"graphOptions":{
+		"lineColor":"mediumseagreen",
+		"_lineTemplate":"UIGraph.UnitStepBarsTemplate",
+		"fillGradient":true,
+		"fillGradientArray": [
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 255, 0)",
+                "rgba(0, 63, 255, 0.05)",
+                "rgba(0, 127, 255, 0.1)",
+                "rgba(0, 191, 255,  0.2)",
+                "rgba(0, 255, 255, 0.5)"
+            ]
+	}
+},{
+	"device": "10-000003",
+	"name": "Outside",
+	"graphOptions":{
+		"lineColor":"brown",
+		"_lineTemplate":"UIGraph.UnitStepBarsTemplate",
+		"fillGradient":true,
+		"fillGradientArray": [
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 0, 0)",
+                "rgba(0, 0, 255, 0)",
+                "rgba(0, 63, 255, 0.05)",
+                "rgba(0, 127, 255, 0.1)",
+                "rgba(0, 191, 255,  0.2)",
+                "rgba(0, 255, 255, 0.5)"
+            ]
+	}
+}, {
+	"name": "Greenhouse Heater",
+	"pin": 7,
+	"direction": "out",
+	"type": "bool",
+	"state": false
+}, {
+	"name": "Greenhouse fan",
+	"pin": 8,
+	"direction": "out",
+	"type": "bool",
+	"state": false
+}]
