@@ -48,6 +48,8 @@ var UIGeneralPurposeIOPanel = new Class({
 				});
 
 				var graphs;
+				var showHistory=true;
+				var history=[];
 				var historyLength=3600*12;
 				var shortHistory=30;
 				var startTime=(new Date()).valueOf()-(1000*historyLength);
@@ -56,13 +58,43 @@ var UIGeneralPurposeIOPanel = new Class({
 				var data={};
 				var lastUpdate;
 				var fps=10;
+
+				
+
+				var getHistory=function(){
+
+					websocket.execute('device_history', {}, function(response) {
+							history=JSON.parse(response);
+
+							history.forEach(function(deviceHistory){
+								itemData=deviceData(deviceHistory);
+								itemData.values=deviceHistory.values.map(function(v){
+									return {x:v.time, y:v.value};
+								}).concat(itemData.values);
+							})
+
+						});
+
+				}
+
 				var deviceData=function(device){
 					var name=device.name||device.device||device.pin;
+
+					if(showHistory){
+						showHistory=false;
+						getHistory();
+					}
 
 
 					if(!data[name]){
 						var index = Object.keys(data).length;
-						data[name]={values:[], options:Object.append(([
+						data[name]={values:[], index:Object.keys(data).length};
+
+					}
+
+					if(!data[name].options){
+						var index=data[name].index;
+						data[name].options=Object.append(([
 	            			{
 		            			lineColor:"blue"
 		            		},{
@@ -74,8 +106,7 @@ var UIGeneralPurposeIOPanel = new Class({
 		            		},{
 		            			lineColor:"black"
 		            		}
-		            	])[index], device.graphOptions||{}), index:index};
-
+		            	])[index], device.graphOptions||{});
 					}
 
 					return data[name];
@@ -150,6 +181,11 @@ var UIGeneralPurposeIOPanel = new Class({
 					
 					var now=(new Date()).valueOf();
 					if(!graphs){
+
+
+
+
+
 						graphs=[
 							new UIGraph(element.appendChild(new Element('div',{'class':'rms-graph'})), {sets:{}}, {
 								title:"Temperature History Last 12 Hours",
