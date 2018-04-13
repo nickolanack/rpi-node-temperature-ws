@@ -29,8 +29,8 @@ if (config.websocketPort !== false) {
 
 	var devices = require('./devices.json');
 
-	(new Temperature.Mock(devices)).on('update', function(sensor) {
-	//(new Temperature()).on('update', function(sensor) {
+	//(new Temperature.Mock(devices)).on('update', function(sensor) {
+	(new Temperature()).on('update', function(sensor) {
 		// 
 		//sensor.time=(new Date()).valueOf();
 		temperatureSensors[sensor.device] = sensor;

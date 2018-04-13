@@ -14,11 +14,39 @@ var UIGeneralPurposeIOPanel = new Class({
 
 		var websocket = new WebsocketControlQuery(me.options.websocket).addEvent('connect', function() {
 
+
+			var showHistory=true;
+			var history=[];
 			var getDevices = function(callback) {
+
+
+
+				if(showHistory){
+					showHistory=false;
+					getHistory(function(){
+						getDevices(callback);
+					});
+					return;
+				}
+
 				websocket.execute('list_devices', {}, function(response) {
 					callback(JSON.parse(response));
 				});
 			};
+
+
+			var getHistory=function(callback){
+
+					websocket.execute('device_history', {}, function(response) {
+							history=JSON.parse(response);
+
+							if(callback){
+								callback();
+							}
+
+						});
+
+				}
 
 			var signalDeviceValue = function(pin, value) {
 				websocket.execute('set_device_value', {
@@ -48,8 +76,6 @@ var UIGeneralPurposeIOPanel = new Class({
 				});
 
 				var graphs;
-				var showHistory=true;
-				var history=[];
 				var historyLength=3600*12;
 				var shortHistory=30;
 				var startTime=(new Date()).valueOf()-(1000*historyLength);
@@ -61,34 +87,28 @@ var UIGeneralPurposeIOPanel = new Class({
 
 				
 
-				var getHistory=function(){
-
-					websocket.execute('device_history', {}, function(response) {
-							history=JSON.parse(response);
-
-							history.forEach(function(deviceHistory){
-								itemData=deviceData(deviceHistory);
-								itemData.values=deviceHistory.values.map(function(v){
-									return {x:v.time, y:v.value};
-								}).concat(itemData.values);
-							})
-
-						});
-
-				}
+				
 
 				var deviceData=function(device){
 					var name=device.name||device.device||device.pin;
-
-					if(showHistory){
-						showHistory=false;
-						getHistory();
-					}
 
 
 					if(!data[name]){
 						var index = Object.keys(data).length;
 						data[name]={values:[], index:Object.keys(data).length};
+
+
+						history.forEach(function(deviceHistory){
+							var deviceHistoryName=deviceHistory.name||deviceHistory.device||deviceHistory.pin;
+							if(deviceHistoryName===name){
+
+
+								
+								data[name].values=deviceHistory.values.map(function(v){
+									return {x:v.time, y:v.value};
+								});
+							}
+						})
 
 					}
 
@@ -189,8 +209,9 @@ var UIGeneralPurposeIOPanel = new Class({
 						graphs=[
 							new UIGraph(element.appendChild(new Element('div',{'class':'rms-graph'})), {sets:{}}, {
 								title:"Temperature History Last 12 Hours",
-								height:100,
-								width:600,
+								height:40,
+								width:100,
+								widthUnit:'%',
 								padding:0,
 								lineColor:'cornflowerblue',
 								parseX: function(dataValue, i) {
@@ -227,7 +248,8 @@ var UIGeneralPurposeIOPanel = new Class({
 							new UIGraph(element.appendChild(new Element('div',{'class':'rms-graph'})), {sets:{}}, {
 								title:"Temperature Last 30 Seconds",
 								height:100,
-								width:600,
+								width:100,
+								widthUnit:'%',
 								padding:0,
 								minYValue:false,
 								lineColor:'cornflowerblue',

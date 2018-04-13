@@ -53,6 +53,12 @@ label.value:after {
     border-radius: 2px;
     padding: 25px 0;
     position: relative;
+    width: calc( 100% - 20px );
+}
+
+.graph canvas {
+    position: relative;
+    left: -1px;
 }
 
 

@@ -477,12 +477,15 @@ var UIGraph = new Class({
 UIGraph.DefaultGraphTemplate = function(element) {
 
 var me = this;
+
+var div=element.appendChild(new Element('div', {'class':"graph"}));
+
 //var height=me.options.height||250;
 //var width=me.options.width||400;
 
 if (me.options.width <= 100 && me.options.widthUnit == '%') {
     var w = me.options.width;
-    me.options.width = element.getSize().x * (w / 100);
+    me.options.width = div.getSize().x * (w / 100);
     var t = null;
     var checkResize = function() {
         if (t) {
@@ -490,7 +493,7 @@ if (me.options.width <= 100 && me.options.widthUnit == '%') {
         }
         t = setTimeout(function() {
             t = null;
-            me.options.width = element.getSize().x * (w / 100);
+            me.options.width = div.getSize().x * (w / 100);
             me.canvas.setAttribute('width', me.options.width);
             if (me.context) {
                 me.context.clearRect(0, 0, me.canvas.width, me.canvas.height);
@@ -519,7 +522,7 @@ var canvas = new Element('canvas', {
 canvas.innerHTML = '<p>your browser sucks.</p>';
 me.canvas = canvas;
 
-var div=element.appendChild(new Element('div', {'class':"graph"}));
+
 
 
 div.appendChild(canvas);
