@@ -39,3 +39,40 @@ label.value:after {
     content: attr(data-units);
     font-size: 10px;
 }
+
+.graph-title {
+    font-family: sans-serif;
+    font-weight: 100;
+    color: cornflowerblue;
+}
+
+.graph {
+    display: inline-block;
+    margin: 10px;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 2px;
+    padding: 25px 0;
+    position: relative;
+}
+
+
+label.min-x {
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+}
+label.min-y {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+}
+label.max-x {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+label.max-y {
+    position: absolute;
+    top: 0;
+    left: 0;
+}

@@ -34,6 +34,7 @@ if (!window.Path2D) {
             context.stroke();
         }
 
+
     });
 }
 
@@ -104,6 +105,18 @@ var UIGraph = new Class({
             },
             parseSetOptions:function(set, i){
                 return null;
+            },
+            formatMinXLabel:function(x){
+                return x;
+            },
+            formatMinYLabel:function(y){
+                return y;
+            },
+            formatMaxXLabel:function(x){
+                return x;
+            },
+            formatMaxYLabel:function(y){
+                return y;
             }
 
         }, options);
@@ -131,6 +144,17 @@ var UIGraph = new Class({
         me.maxYValue = 0;
         me.maxXValue = 0;
 
+
+        me.minYValue = me.options.minYValue;
+        me.minXValue = me.options.minYValue;
+
+        var detectMinY=false;
+
+        if(me.minYValue===false){
+            me.minYValue=Infinity;
+            detectMinY=true;
+        }
+
         var sets=me.options.parseSets(arg);
 
         sets.forEach(function(set){
@@ -141,6 +165,12 @@ var UIGraph = new Class({
                     var y = me.options.parseY(v, i);
                     if (me.maxYValue < y) {
                         me.maxYValue = y;
+                    }
+
+                    if(detectMinY){
+                        if (me.minYValue > y) {
+                            me.minYValue = y;
+                        }
                     }
 
                     var x = me.options.parseX(v, i);
@@ -155,12 +185,12 @@ var UIGraph = new Class({
 
         
 
-        if (me.maxYValue < me.options.minYValue) {
-            me.maxYValue = me.options.minYValue;
+        if (me.maxYValue < me.minYValue) {
+            me.maxYValue = me.minYValue;
         }
 
-        if (me.maxXValue < me.options.minXValue) {
-            me.maxXValue = me.options.minXValue;
+        if (me.maxXValue < me.minXValue) {
+            me.maxXValue = me.minXValue;
         }
 
         if (me.context) {
@@ -259,6 +289,9 @@ var UIGraph = new Class({
         } else {
             me.context.stroke(me._path);
         }
+
+
+        me.fireEvent('render');
     },
     getWidth: function(padding) {
         return (this.options.width || 400) - (padding ? 0 : 2 * (this.options.padding || 0));
@@ -272,7 +305,7 @@ var UIGraph = new Class({
             //console.trace(); 
             throw 'Invalid Y';
         }
-        var value = me.getHeight() * (1 - y / me.maxYValue) + (this.options.padding || 0);
+        var value = me.getHeight() * (1 - (y-me.minYValue) / (me.maxYValue-me.minYValue)) + (this.options.padding || 0);
         //JSConsole(['Y pixel', y, value]);
         return value;
 
@@ -485,7 +518,26 @@ var canvas = new Element('canvas', {
 });
 canvas.innerHTML = '<p>your browser sucks.</p>';
 me.canvas = canvas;
-element.appendChild(canvas);
+
+var div=element.appendChild(new Element('div', {'class':"graph"}));
+
+
+div.appendChild(canvas);
+
+var minx=div.appendChild(new Element('label', {"class":"min-x"}));
+var maxx=div.appendChild(new Element('label', {"class":"max-x"}));
+var miny=div.appendChild(new Element('label', {"class":"min-y"}));
+var maxy=div.appendChild(new Element('label', {"class":"max-y"}));
+
+me.addEvent('render', function(){
+
+    minx.innerHTML=me.options.formatMinXLabel(me.minXValue);
+    maxx.innerHTML=me.options.formatMaxXLabel(me.maxXValue);
+    miny.innerHTML=me.options.formatMinYLabel(me.minYValue);
+    maxy.innerHTML=me.options.formatMaxYLabel(me.maxYValue);
+
+})
+
 var context = canvas.getContext('2d');
 me.context = context;
 
@@ -615,7 +667,7 @@ UIGraph.DefaultTitleTemplate = function(title) {
 var me = this;
 if (!me.titleEl) {
     me.titleEl = new Element('div', {
-        'class': me.options.classNamePrefix + 'Title'
+        'class': me.options.classNamePrefix + 'Title graph-title'
     });
     me.element.appendChild(me.titleEl);
 }

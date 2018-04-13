@@ -47,50 +47,17 @@ var UIGeneralPurposeIOPanel = new Class({
 
 				});
 
-				var graph;
-				var startTime=(new Date()).valueOf();
+				var graphs;
+				var historyLength=3600*12;
+				var shortHistory=30;
+				var startTime=(new Date()).valueOf()-(1000*historyLength);
+				var shortStartTime=(new Date()).valueOf()-(1000*shortHistory);
+				
 				var data={};
+				var lastUpdate;
+				var fps=10;
 				var deviceData=function(device){
 					var name=device.name||device.device||device.pin;
-					return data[name];
-				}
-				var addGraphHistory=function(device, value){
-
-					var name=device.name||device.device||device.pin;
-				
-					
-					var now=(new Date()).valueOf();
-					if(!graph){
-						graph=new UIGraph(element.appendChild(new Element('div',{'class':'rms-graph'})), {sets:{}}, {
-							title:"",
-							height:200,
-							width:600,
-							padding:14,
-							lineColor:'cornflowerblue',
-							parseX: function(dataValue, i) {
-				                var x=dataValue.x;
-				                return (x-startTime)/1000.0;
-				            },
-				            parseY: function(dataValue, i) {
-				                var y= parseFloat(dataValue.y);
-				                return y;
-				            },
-				            lineTemplate: UIGraph.LineTemplate,
-				            parseSets:function(dataSet){
-				            	var sets=[];
-				            	Object.keys(dataSet.sets).forEach(function(k){
-				            		sets.push(dataSet.sets[k]);
-				            	});
-				            	return sets;
-				            },
-				            parseSetData:function(set){
-				            	return set.values;
-				            },
-				            parseSetOptions:function(set, i){
-				            	return set.options;
-				            }
-						});
-					}
 
 
 					if(!data[name]){
@@ -109,39 +76,166 @@ var UIGeneralPurposeIOPanel = new Class({
 		            		}
 		            	])[index], device.graphOptions||{}), index:index};
 
-						setInterval(function(){
-
-							/**
-							 * Devices with very little change can fall off the graph
-							 */
-
-							var time=(new Date()).valueOf();
-							var last=data[name].values[data[name].values.length-1];
-							if(last.x<time-(1000)){
-								data[name].values.push({x:time, y:last.y});
-							}
-
-							if(now<time-(1000)){
-								graph.setData({sets:data});
-							}
-							
-						},1000);
-
 					}
 
+					return data[name];
+				}
+
+				var updateGraphs=function(){
+					lastUpdate=(new Date()).valueOf();
+					trimData();
+					padData();
+					graphs.forEach(function(g){
+						g.setData({sets:data});
+					})
+
+
+					startTime=(new Date()).valueOf()-(1000*historyLength);
+					shortStartTime=(new Date()).valueOf()-(1000*shortHistory);
+
+				}
+
+				var trimData=function(){
+					var now=(new Date()).valueOf();
+					var min=now-(1000*historyLength);
 					
-					var min=now-(1000*100);
 					if(startTime<min){
 						Object.keys(data).forEach(function(k){
+							var last;
 							while(data[k].values.length&&data[k].values[0].x<min){
-								data[k].values.shift();
+								last=data[k].values.shift();
 							}
+							//if(last){
+								data[k].values.unshift({x:min, y:data[k].values[0].y});
+							//}
 						})
-						startTime=min;
 					}
 
-					data[name].values.push({x:now, y:value});
-					graph.setData({sets:data});
+
+				}
+
+				var padData=function(){
+					
+					var time=(new Date()).valueOf();
+
+					Object.keys(data).forEach(function(name){
+
+
+						var itemData=data[name];
+					
+
+	
+						
+						var index=itemData.values.length-1;
+						var last=itemData.values[index];
+						if(index>1){
+							var secondLast=itemData.values[index-1];
+							if(secondLast.y==last.y){
+								//stretch data point
+								last.x=time;
+								return;
+							}
+						}
+						//if(last.x<time-(1000)){
+							itemData.values.push({x:time, y:last.y});
+						//}
+
+					})
+				}
+
+				var addGraphHistory=function(device, value){
+
+					
+				
+					
+					var now=(new Date()).valueOf();
+					if(!graphs){
+						graphs=[
+							new UIGraph(element.appendChild(new Element('div',{'class':'rms-graph'})), {sets:{}}, {
+								title:"Temperature History Last 12 Hours",
+								height:100,
+								width:600,
+								padding:0,
+								lineColor:'cornflowerblue',
+								parseX: function(dataValue, i) {
+					                var x=dataValue.x;
+					                return (x-startTime)/1000.0;
+					            },
+
+					            parseY: function(dataValue, i) {
+					                var y= parseFloat(dataValue.y);
+					                return y;
+					            },
+					            lineTemplate: UIGraph.LineTemplate,
+					            parseSets:function(dataSet){
+					            	var sets=[];
+					            	Object.keys(dataSet.sets).forEach(function(k){
+					            		sets.push(dataSet.sets[k]);
+					            	});
+					            	return sets;
+					            },
+					            parseSetData:function(set){
+					            	return set.values;
+					            },
+					            parseSetOptions:function(set, i){
+					            	return set.options;
+					            },
+					            formatMinXLabel:function(x){
+					                return (historyLength/(3600))+' hours';
+					            },
+					            formatMaxXLabel:function(x){
+					                return "now";
+					            }
+					            
+							}),
+							new UIGraph(element.appendChild(new Element('div',{'class':'rms-graph'})), {sets:{}}, {
+								title:"Temperature Last 30 Seconds",
+								height:100,
+								width:600,
+								padding:0,
+								minYValue:false,
+								lineColor:'cornflowerblue',
+								parseX: function(dataValue, i) {
+					                var x=dataValue.x;
+					                return (x-shortStartTime)/1000.0;
+					            },
+					            parseY: function(dataValue, i) {
+					                var y= parseFloat(dataValue.y);
+					                return y;
+					            },
+					            lineTemplate: UIGraph.LineTemplate,
+					            parseSets:function(dataSet){
+					            	var sets=[];
+					            	Object.keys(dataSet.sets).forEach(function(k){
+					            		sets.push(dataSet.sets[k]);
+					            	});
+					            	return sets;
+					            },
+					            parseSetData:function(set){
+					            	return set.values;
+					            },
+					            parseSetOptions:function(set, i){
+					            	return set.options;
+					            },
+					            formatMinXLabel:function(x){
+					                return shortHistory+' seconds';
+					            },
+					            formatMaxXLabel:function(x){
+					                return "now";
+					            }
+							})
+						]
+
+						setInterval(updateGraphs, 1000/fps);
+					}
+
+
+					
+					var itemData=deviceData(device);
+					
+					
+
+					deviceData(device).values.push({x:now, y:value});
 					
 					
 
