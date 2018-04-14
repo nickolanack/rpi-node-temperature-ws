@@ -57,7 +57,9 @@ var UIGeneralPurposeIOPanel = new Class({
 					}
 
 					
-
+					while(data[name].values.length&&data[name].values[0].pad===true){
+						data[name].values.shift();
+					}
 
 						
 					data[name].values=deviceHistory.values.map(function(v){
@@ -195,7 +197,7 @@ var UIGeneralPurposeIOPanel = new Class({
 								last=data[k].values.shift();
 							}
 							//if(last){
-								data[k].values.unshift({x:min, y:data[k].values[0].y});
+								data[k].values.unshift({x:min, y:data[k].values[0].y, pad:true});
 							//}
 						})
 					}
@@ -226,7 +228,7 @@ var UIGeneralPurposeIOPanel = new Class({
 							}
 						}
 						//if(last.x<time-(1000)){
-							itemData.values.push({x:time, y:last.y});
+							itemData.values.push({x:time, y:last.y, pad:true});
 						//}
 
 					})
