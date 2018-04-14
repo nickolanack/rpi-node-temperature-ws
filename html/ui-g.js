@@ -162,6 +162,18 @@ var UIGraph = new Class({
 
             if (data && data.length) {
                 Array.each(data, function(v, i) {
+                  
+                    var x = me.options.parseX(v, i);
+                    if (me.maxXValue < x) {
+                        me.maxXValue = x;
+                    }
+                    
+                });
+
+
+
+                Array.each(data, function(v, i) {
+                    
                     var y = me.options.parseY(v, i);
                     if (me.maxYValue < y) {
                         me.maxYValue = y;
@@ -172,12 +184,6 @@ var UIGraph = new Class({
                             me.minYValue = y;
                         }
                     }
-
-                    var x = me.options.parseX(v, i);
-                    if (me.maxXValue < x) {
-                        me.maxXValue = x;
-                    }
-                    
                 });
             }
 
@@ -352,8 +358,17 @@ var UIGraph = new Class({
      */
     dataPointAtXPixel: function(x) {
         var me = this;
-        var index = Math.min(Math.floor(((x - (me.options.padding || 0)) / me.getWidth()) * me.maxXValue), me.data.length - 1);
-        return me.data[index];
+        var xValue = Math.min(Math.floor(((x - (me.options.padding || 0)) / me.getWidth()) * me.maxXValue), me.data.length - 1);
+        
+        var val;
+        for(var i=0;i<me.data.length; i++){
+            val=me.data[i];
+            if(val.x>xValue){
+                break;
+            }
+        }
+
+        return val;
     },
 
     _overDataPoint: function(d, evt) {
@@ -410,7 +425,8 @@ var UIGraph = new Class({
                 y: evt.page.y - page.y
             };
 
-            me._overDataPoint(me.dataPointAtXPixel(point.x), evt);
+            var dataPoint=me.dataPointAtXPixel(point.x);
+            me._overDataPoint(dataPoint, evt);
 
 
 
@@ -480,6 +496,7 @@ var me = this;
 
 var div=element.appendChild(new Element('div', {'class':"graph"}));
 
+
 //var height=me.options.height||250;
 //var width=me.options.width||400;
 
@@ -531,6 +548,9 @@ var minx=div.appendChild(new Element('label', {"class":"min-x"}));
 var maxx=div.appendChild(new Element('label', {"class":"max-x"}));
 var miny=div.appendChild(new Element('label', {"class":"min-y"}));
 var maxy=div.appendChild(new Element('label', {"class":"max-y"}));
+
+
+
 
 me.addEvent('render', function(){
 

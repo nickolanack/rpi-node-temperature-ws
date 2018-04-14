@@ -16,7 +16,18 @@ var UIGeneralPurposeIOPanel = new Class({
 
 
 			var showHistory=true;
-			var history=[];
+			var history=null;
+
+			var graphs;
+			var historyLength=3600*24;
+			var shortHistory=120;
+			var startTime=(new Date()).valueOf()-(1000*historyLength);
+			var shortStartTime=(new Date()).valueOf()-(1000*shortHistory);
+			
+			var data={};
+			var lastUpdate;
+			var fps=10;
+
 			var getDevices = function(callback) {
 
 
@@ -34,16 +45,64 @@ var UIGeneralPurposeIOPanel = new Class({
 				});
 			};
 
+			var mergeHistory=function(history){
+
+				history.forEach(function(deviceHistory){
+					var name=deviceHistory.name||deviceHistory.device||deviceHistory.pin;
+
+
+					if(!data[name]){
+						var index = Object.keys(data).length;
+						data[name]={values:[], index:Object.keys(data).length};
+					}
+
+					
+
+
+						
+					data[name].values=deviceHistory.values.map(function(v){
+						return {x:v.time, y:v.value};
+					}).concat(data[name].values);
+					
+				});
+
+			}
 
 			var getHistory=function(callback){
 
-					websocket.execute('device_history', {}, function(response) {
-							history=JSON.parse(response);
+					var start=(new Date()).valueOf()-(3600*1000);
+					var end;
+					var begining=startTime;
+					var getChunk=function(filter){
+						websocket.execute('device_history', filter , function(response) {
+
+							
+
+							var segment=JSON.parse(response);
+							mergeHistory(segment);
+
+
+							history=segment;
 
 							if(callback){
 								callback();
+								callback=null;
 							}
 
+							if(start>begining){
+								end=start;
+								start=start-(3600*1000);
+								getChunk({
+									start:start,
+									end:end
+								});
+							}
+
+						});
+					}
+
+					getChunk({
+							start:start,
 						});
 
 				}
@@ -75,15 +134,7 @@ var UIGeneralPurposeIOPanel = new Class({
 
 				});
 
-				var graphs;
-				var historyLength=3600*12;
-				var shortHistory=30;
-				var startTime=(new Date()).valueOf()-(1000*historyLength);
-				var shortStartTime=(new Date()).valueOf()-(1000*shortHistory);
 				
-				var data={};
-				var lastUpdate;
-				var fps=10;
 
 				
 
@@ -96,19 +147,6 @@ var UIGeneralPurposeIOPanel = new Class({
 					if(!data[name]){
 						var index = Object.keys(data).length;
 						data[name]={values:[], index:Object.keys(data).length};
-
-
-						history.forEach(function(deviceHistory){
-							var deviceHistoryName=deviceHistory.name||deviceHistory.device||deviceHistory.pin;
-							if(deviceHistoryName===name){
-
-
-								
-								data[name].values=deviceHistory.values.map(function(v){
-									return {x:v.time, y:v.value};
-								});
-							}
-						})
 
 					}
 
@@ -212,6 +250,7 @@ var UIGeneralPurposeIOPanel = new Class({
 								height:40,
 								width:100,
 								widthUnit:'%',
+								minYValue:false,
 								padding:0,
 								lineColor:'cornflowerblue',
 								parseX: function(dataValue, i) {
@@ -238,7 +277,7 @@ var UIGeneralPurposeIOPanel = new Class({
 					            	return set.options;
 					            },
 					            formatMinXLabel:function(x){
-					                return (historyLength/(3600))+' hours';
+					                return (historyLength/(3600))+' hours ago';
 					            },
 					            formatMaxXLabel:function(x){
 					                return "now";
@@ -276,11 +315,13 @@ var UIGeneralPurposeIOPanel = new Class({
 					            	return set.options;
 					            },
 					            formatMinXLabel:function(x){
-					                return shortHistory+' seconds';
+					                return shortHistory+' seconds ago';
 					            },
 					            formatMaxXLabel:function(x){
 					                return "now";
 					            }
+							}).addEvent('mouseover',function(data){
+								console.log(data);
 							})
 						]
 

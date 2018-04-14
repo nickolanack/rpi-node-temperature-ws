@@ -122,6 +122,29 @@ if (config.websocketPort !== false) {
 
 			var values=JSON.parse('['+data.substring(0,data.length-2)+']');
 			//console.log('['+data.substring(0,data.length-2)+']');
+			
+			//console.log(options);
+			//console.log(values[0]);
+			var start=-1;
+			var end=Infinity;
+			var filter=false;
+
+			if(options.args&&options.args.start){
+				start=options.args.start;
+				filter=true;
+			}
+			if(options.args&&options.args.end){
+				end=options.args.end;
+				filter=true;
+			}
+
+			if(filter){
+				console.log('values.slice('+start+', '+end+') '+values.length);
+				values=values.filter(function(v){
+					return start<=v.time&&end>v.time;
+				});
+				console.log(values.length);
+			}
 
 			return {
 
