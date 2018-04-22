@@ -118,9 +118,16 @@ if (config.websocketPort !== false) {
 
 			var file='.history.'+(device.device||device.pin||device.name)+'.json';
 
-			var data=fs.readFileSync(file, 'utf8');
+			
+			var values=[];
 
-			var values=JSON.parse('['+data.substring(0,data.length-2)+']');
+			try{
+				var data=fs.readFileSync(file, 'utf8');
+				var values=JSON.parse('['+data.substring(0,data.length-2)+']');
+			}catch(e){
+				console.log(e);
+			}
+
 			//console.log('['+data.substring(0,data.length-2)+']');
 			
 			//console.log(options);
